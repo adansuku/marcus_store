@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_29_133932) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_29_135805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,6 +23,25 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_133932) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["parent_category_id"], name: "index_categories_on_parent_category_id"
+  end
+
+  create_table "part_options", force: :cascade do |t|
+    t.bigint "part_id", null: false
+    t.string "name", null: false
+    t.decimal "price", precision: 10, scale: 2, default: "0.0"
+    t.boolean "in_stock", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["part_id", "name"], name: "index_part_options_on_part_id_and_name", unique: true
+    t.index ["part_id"], name: "index_part_options_on_part_id"
+  end
+
+  create_table "parts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_parts_on_name", unique: true
   end
 
   create_table "products", force: :cascade do |t|
@@ -60,6 +79,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_133932) do
   end
 
   add_foreign_key "categories", "categories", column: "parent_category_id"
+  add_foreign_key "part_options", "parts"
   add_foreign_key "products", "categories"
   add_foreign_key "variant_options", "variants"
   add_foreign_key "variants", "products"
