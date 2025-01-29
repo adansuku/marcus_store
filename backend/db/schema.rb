@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_29_105736) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_29_133932) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -38,6 +38,29 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_105736) do
     t.index ["name"], name: "index_products_on_name", unique: true
   end
 
+  create_table "variant_options", force: :cascade do |t|
+    t.bigint "variant_id", null: false
+    t.string "option_name", null: false
+    t.string "option_value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["variant_id"], name: "index_variant_options_on_variant_id"
+  end
+
+  create_table "variants", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.string "sku", null: false
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.integer "stock_quantity", default: 0, null: false
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_variants_on_product_id"
+    t.index ["sku"], name: "index_variants_on_sku", unique: true
+  end
+
   add_foreign_key "categories", "categories", column: "parent_category_id"
   add_foreign_key "products", "categories"
+  add_foreign_key "variant_options", "variants"
+  add_foreign_key "variants", "products"
 end
