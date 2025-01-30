@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_30_101156) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_30_111900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,24 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_30_101156) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_parts_on_name", unique: true
+  end
+
+  create_table "pricing_rules", force: :cascade do |t|
+    t.bigint "product_id"
+    t.bigint "variant_option_id"
+    t.bigint "part_option_id"
+    t.bigint "dependent_variant_option_id"
+    t.bigint "dependent_part_option_id"
+    t.decimal "price", precision: 10, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dependent_part_option_id"], name: "index_pricing_rules_on_dependent_part_option_id"
+    t.index ["dependent_variant_option_id"], name: "index_pricing_rules_on_dependent_variant_option_id"
+    t.index ["part_option_id"], name: "index_pricing_rules_on_part_option_id"
+    t.index ["product_id", "part_option_id", "dependent_part_option_id"], name: "idx_part_pricing_rules_unique", unique: true
+    t.index ["product_id", "variant_option_id", "dependent_variant_option_id"], name: "idx_variant_pricing_rules_unique", unique: true
+    t.index ["product_id"], name: "index_pricing_rules_on_product_id"
+    t.index ["variant_option_id"], name: "index_pricing_rules_on_variant_option_id"
   end
 
   create_table "product_parts", force: :cascade do |t|
@@ -102,6 +120,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_30_101156) do
 
   add_foreign_key "categories", "categories", column: "parent_category_id"
   add_foreign_key "part_options", "parts"
+  add_foreign_key "pricing_rules", "part_options"
+  add_foreign_key "pricing_rules", "part_options", column: "dependent_part_option_id"
+  add_foreign_key "pricing_rules", "products"
+  add_foreign_key "pricing_rules", "variant_options"
+  add_foreign_key "pricing_rules", "variant_options", column: "dependent_variant_option_id"
   add_foreign_key "product_parts", "parts"
   add_foreign_key "product_parts", "products"
   add_foreign_key "products", "categories"
