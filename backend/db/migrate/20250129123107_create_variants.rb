@@ -1,4 +1,4 @@
-class CreateVariants < ActiveRecord::Migration[7.1]
+class CreateVariants < ActiveRecord::Migration[7.2]
   def change
     create_table :variants do |t|
       t.references :product, null: false, foreign_key: true
