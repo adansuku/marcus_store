@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_29_140152) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_30_101156) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -68,6 +68,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_140152) do
     t.index ["name"], name: "index_products_on_name", unique: true
   end
 
+  create_table "restrictions", force: :cascade do |t|
+    t.bigint "source_part_option_id", null: false
+    t.bigint "target_part_option_id", null: false
+    t.string "restriction_type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_part_option_id", "target_part_option_id"], name: "idx_restrictions_unique", unique: true
+    t.index ["source_part_option_id"], name: "index_restrictions_on_source_part_option_id"
+    t.index ["target_part_option_id"], name: "index_restrictions_on_target_part_option_id"
+  end
+
   create_table "variant_options", force: :cascade do |t|
     t.bigint "variant_id", null: false
     t.string "option_name", null: false
@@ -94,6 +105,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_140152) do
   add_foreign_key "product_parts", "parts"
   add_foreign_key "product_parts", "products"
   add_foreign_key "products", "categories"
+  add_foreign_key "restrictions", "part_options", column: "source_part_option_id"
+  add_foreign_key "restrictions", "part_options", column: "target_part_option_id"
   add_foreign_key "variant_options", "variants"
   add_foreign_key "variants", "products"
 end
