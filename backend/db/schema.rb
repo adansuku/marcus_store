@@ -45,8 +45,14 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_140152) do
   end
 
   create_table "product_parts", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.bigint "part_id", null: false
+    t.boolean "required", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["part_id"], name: "index_product_parts_on_part_id"
+    t.index ["product_id", "part_id"], name: "index_product_parts_on_product_id_and_part_id", unique: true
+    t.index ["product_id"], name: "index_product_parts_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -85,6 +91,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_140152) do
 
   add_foreign_key "categories", "categories", column: "parent_category_id"
   add_foreign_key "part_options", "parts"
+  add_foreign_key "product_parts", "parts"
+  add_foreign_key "product_parts", "products"
   add_foreign_key "products", "categories"
   add_foreign_key "variant_options", "variants"
   add_foreign_key "variants", "products"
